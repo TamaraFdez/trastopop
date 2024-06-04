@@ -1,0 +1,18 @@
+# Activa el motor de reescritura de URLs
+RewriteEngine on
+
+#Verificar que el archivo solicitado no existe en el server
+RewriteCond %{REQUEST_FILENAME} !-f
+
+#Verificar que el directorio solicitado no existe en el server
+RewriteCond %{REQUEST_FILENAME} !-d
+
+
+#redirige todas las solicitudes a index.php
+#^(.*): Captura cualquier URi solicitada
+#/index.php: Eld estino al que se redirige
+#NC: no distigue entre mayusculas y minusculas
+#L:esta es la ultima regla que se aplica si coincide
+#QSA: preserva la cadena de consulta original y la añade al destino
+RewriteRule ^(.*)$ /index.php [NC,L,QSA]
+
