@@ -3,10 +3,9 @@
 $config = require basePath('config/db.php');
 $db = new Database($config);
 
-$query = 'SELECT * FROM trastos LIMIT 3';
-$stmt = $db->conn->prepare($query);
-$stmt->execute();
-$trastos = $stmt->fetchAll(); 
+
+
+$trastos = $db->query('SELECT * FROM trastos LIMIT 3')->fetchAll();
 
 
 //Llamar al modelo para obtener los datos

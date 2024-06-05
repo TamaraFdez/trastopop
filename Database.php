@@ -1,7 +1,7 @@
 <?php
 class Database
 {
-    public $conn;
+    private $conn;
 
     public function __construct($config)
     {
@@ -16,7 +16,30 @@ class Database
 
             echo "Conectado a la base de datos...";
         } catch (PDOException $e) {
-            throw new Exception( "Error al conectar a la base de datos: {$e->getMessage()}");
+            throw new Exception("Error al conectar a la base de datos: {$e->getMessage()}");
+        }
+    }
+    /**
+     * Consulta base de datos 
+     * 
+     * @param string $query
+     * @return PDOStatement
+     * @throws PDOException
+     */
+
+    function query($query, $params = [])
+    {
+        try {
+
+            $stmt = $this->conn->prepare($query);
+            foreach($params as $param => $value){
+                    $stmt->bindValue(':'.$param, $value);
+            }
+            $stmt->execute();
+            return $stmt;
+        } catch (PDOException $e) {
+
+            throw new Exception("la consulta ha fallado: {$e->getMessage()}");
         }
     }
 }

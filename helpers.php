@@ -1,7 +1,8 @@
 <?php
 
-function basePath($path = ''){
-    return __DIR__ . '/'. $path;
+function basePath($path = '')
+{
+    return __DIR__ . '/' . $path;
 }
 /**
  * Cargar una vista por su nombre
@@ -10,12 +11,13 @@ function basePath($path = ''){
  * @return void
  */
 
-function loadView ($name, $data=[]){
+function loadView($name, $data = [])
+{
     $viewPath = basePath("views/$name.view.php");
-    if(file_exists($viewPath)){
+    if (file_exists($viewPath)) {
         extract($data);
         require $viewPath;
-    }else{
+    } else {
         echo "la vista $name no existe";
     }
 }
@@ -24,11 +26,12 @@ function loadView ($name, $data=[]){
  * @param string $name
  * @return void
  */
-function loadPartial($name){
+function loadPartial($name)
+{
     $partialPath = basePath("views/partials/$name.php");
-    if(file_exists($partialPath)){
+    if (file_exists($partialPath)) {
         require $partialPath;
-    }else{
+    } else {
         echo "la vista $name no existe";
     }
 }
@@ -39,9 +42,22 @@ function loadPartial($name){
  * @return void
  */
 
-function inspect($value){
+function inspect($value)
+{
     echo '<pre>';
     var_dump($value);
     echo '</pre>';
- 
+}
+/**
+ * inspeccionar una variable y para la ejecución
+ * @param mixed $value
+ * @return void
+ */
+
+function inspectAndDie($value)
+{
+    echo '<pre>';
+    var_dump($value);
+    echo '</pre>';
+    die();
 }
