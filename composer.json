@@ -1,0 +1,16 @@
+{
+    "name": "tamara/trastopop",
+    "description": "MVC app para trastos",
+    "authors": [
+        {
+            "name": "Tamara",
+            "email": "test@email.com"
+        }
+    ],
+    "autoload":{
+        "psr-4":{
+            "Core\\":"Core/",
+            "App\\":"App/"
+        }
+    }
+}
