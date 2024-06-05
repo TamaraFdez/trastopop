@@ -12,6 +12,7 @@
           This is a success message.
         </div> -->
         <form method="POST">
+          <input type="hidden" name="_method">
           <h2 class="text-2xl font-bold mb-6 text-center text-gray-500">
             Información del Artículo
           </h2>

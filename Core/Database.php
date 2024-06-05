@@ -19,7 +19,7 @@ class Database
         try {
             $this->conn = new PDO($dsn, $config['username'], $config['password'], $options);
 
-            echo "Conectado a la base de datos...";
+            
         } catch (PDOException $e) {
             throw new Exception("Error al conectar a la base de datos: {$e->getMessage()}");
         }
