@@ -2,6 +2,7 @@
 
 namespace Core;
 
+use App\Controllers\ErrorController;
 use App\Controllers\HomeController;
 
 class Router
@@ -67,19 +68,7 @@ class Router
         $this->registerRoute('DELETE', $uri, $controller);
     }
 
-    /**
-     * Carga la vista de error que corresponda
-     *
-     * @param integer $httpErrorCode
-     * @return void
-     */
-    function error($httpErrorCode = 404)
-    {
-        http_response_code($httpErrorCode);
-        loadView("error/$httpErrorCode");
-        exit;
-    }
-
+ 
     /**
      * Recibe una uri y un método y carga el contolador
      * correspondiente
@@ -143,7 +132,6 @@ class Router
                  }
              }
          }
-         //TODO error static class
-         $this->error(404);
+        ErrorController::notFount();
      }
  }

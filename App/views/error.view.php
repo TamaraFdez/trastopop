@@ -6,9 +6,13 @@
         <div
           class="text-center text-3xl mb-4 font-bold border border-gray-300 p-3"
         >
-          403 Error
+          <?= $status ?>
         </div>
-        <p class="text-center text-2xl mb-4">No tienes permisos</p>
+        <p class="text-center text-2xl mb-4"><?= $message ?></p>
+        <a href="/trastos" class="block text-xl text-center">
+            <i class="fa fa-arrow-alt-circle-right"></i>
+            Ver Todos los Trastos
+        </a>
       </div>
     </section>
 
