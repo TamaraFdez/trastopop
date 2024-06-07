@@ -14,7 +14,7 @@
                         <?= $trasto->description ?>
                     </p>
                     <ul class="my-4 bg-gray-100 p-4 rounded">
-                    <li class="mb-2"><strong>Imagen:</strong> <img src="/images/<?= $trasto->imgurl ?>" alt=""> </li>
+                    <li class="mb-2"><strong>Imagen:</strong><a data-fslightbox='<?= $trasto->title ?>' href="/images/<?= $trasto->imgurl ?>"><img src="/thumbnail/<?= $trasto->thumbnail_imgurl ?>" alt="<?= $trasto->title ?>"></a> </li>
                         <li class="mb-2"><strong>Precio:</strong> <?= $trasto->price ?></li>
                         <li class="mb-2">
                             <strong>Ubicación:</strong> <?= $trasto->city ?>

@@ -35,12 +35,40 @@ function loadPartial($name)
         echo "la vista $name no existe";
     }
 }
-function sanitize($dirty){
+function sanitize($dirty)
+{
     return filter_var(trim($dirty), FILTER_SANITIZE_SPECIAL_CHARS);
 }
-function redirect($url){
+function redirect($url)
+{
     header("Location: $url");
 }
+
+function resizeImg($trasto)
+{
+    $ruta_img = basePath('public/images/' . $trasto['imgurl']);
+    $maxSize = 300;
+    $image = new Imagick($ruta_img);
+    if ($image->getImageHeight() <= $image->getImageWidth()) {
+        //Usar algoritmo de lanczos en base al mayor
+        $image->resizeImage($maxSize, 0, Imagick::FILTER_LANCZOS, 1);
+    } else {
+        //En base al alto
+        $image->resizeImage(0, $maxSize, Imagick::FILTER_LANCZOS, 1);
+    }
+    // Usar compresion en jpg
+    $image->setImageCompression(Imagick::COMPRESSION_JPEG);
+    // Elegir nivel de compresion(minimo 1, maximo 100, )
+    $image->setImageCompressionQuality(80);
+    // borrar metadatos innecesarios
+    $image->stripImage();
+
+    // Guardar copia en directorio
+    $image->writeImage(basePath('public/thumbnail/' . 'thumb' . $trasto['imgurl']));
+    // Destroys Imagick object, freeing allocated resources in the process
+    $image->destroy();
+}
+
 
 /**
  * inspeccionar una variable y para la ejecución
