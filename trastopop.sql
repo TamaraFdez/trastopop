@@ -7,7 +7,7 @@ USE trastopop;
 CREATE TABLE trastopop.users (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NULL,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     city VARCHAR(45) NULL,
     state VARCHAR(45) NULL,
@@ -31,6 +31,8 @@ CREATE TABLE trastopop.trastos (
     `state` VARCHAR(100),
     phone VARCHAR(20),
     email VARCHAR(255) NOT NULL,
+    `imgurl` VARCHAR(255),
+    `thumbnail_imgurl` VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users (id)
@@ -181,4 +183,4 @@ VALUES (
         'cámara, nikon, fotografía'
     );
 
-SELECT * FROM trastos LIMIT 1
+

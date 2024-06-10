@@ -22,13 +22,13 @@
                         </p>
                         <ul class="my-4 bg-gray-100 p-4 rounded">
                             <li class="mb-2"><strong>Imagen:</strong> <img data-fslightbox href="/images/<?= $trasto->imgurl ?>" src="/thumbnail/<?= $trasto->thumbnail_imgurl ?>" alt=""> </li>
-                            <li class="mb-2"><strong>Precio:</strong> <?= $trasto->price ?></li>
+                            <li class="mb-2"><strong>Precio:</strong> <?= $trasto->price ?>€</li>
                             <li class="mb-2">
                                 <strong>Ubicación:</strong> <?= $trasto->city ?>
                                 <!-- <span class="text-xs bg-blue-500 text-white rounded-full px-2 py-1 ml-2">Local</span> -->
                             </li>
                             <li class="mb-2">
-                                <strong>Categoria:</strong> <span><?= $trasto->category ?></span>,
+                                <strong>Categoria:</strong> <span><?= $trasto->category ?></span>
 
                             </li>
                             <li class="mb-2">

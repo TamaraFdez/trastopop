@@ -6,15 +6,17 @@
 ?>
 <section class="container mx-auto p-4 mt-4">
     <div class="rounded-lg shadow-md bg-white p-3">
+        <?= loadPartial('message')?>
         <div class="flex justify-between items-center">
             <a class="block p-4 text-blue-700" href="/trastos">
                 <i class="fa fa-arrow-alt-circle-left"></i>
                 Volver a los Listados
             </a>
             <div class="flex space-x-4 ml-4">
-                <a href="/edit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">Editar</a>
+                <a href="/trasto/edit/<?= $trasto->id?>" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">Editar</a>
                 <!-- Delete Form -->
                 <form method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
                     <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded">
                         Eliminar
                     </button>
@@ -29,7 +31,7 @@
             </p>
             <ul class="my-4 bg-gray-100 p-4">
             <li class="mb-2"><strong>Imagen:</strong> <img src="/images/<?= $trasto->imgurl ?>" alt="Imagen"> </li>
-                <li class="mb-2"><strong>Precio:</strong> <?= $trasto->price ?></li>
+                <li class="mb-2"><strong>Precio:</strong> <?= $trasto->price ?>€</li>
                 <li class="mb-2">
                     <strong>Ubicación:</strong> <?= $trasto->city ?>
                     <!-- <span class="text-xs bg-blue-500 text-white rounded-full px-2 py-1 ml-2">Local</span> -->

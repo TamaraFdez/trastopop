@@ -1,5 +1,5 @@
 <?php 
-
+session_start();
 require __DIR__.'/../vendor/autoload.php';
 require '../helpers.php';
 // spl_autoload_register(function($class){
@@ -9,6 +9,10 @@ require '../helpers.php';
 //     }
 // });
 use Core\Router;
+use Core\Session;
+
+Session::start();
+
 $router = new Core\Router();
 
 

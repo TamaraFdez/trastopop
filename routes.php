@@ -10,9 +10,12 @@ $router->post('/trasto', "TrastoController@store");
 $router->put('/trasto/{id}', "TrastoController@update");
 $router->delete('/trasto/{id}', "TrastoController@delete");
 
+//rutas para la autenticación de los usuarios
+$router->get('/auth/register', 'UserController@create');
+$router->get('/auth/login', 'UserController@login');
 
-// $router->get('/','controllers/home.php');
-// $router->get('/trastos','controllers/trastos/show.php');
-// $router->get('/trastos','controllers/trastos/index.php');
-// $router->get('/trastos/create','controllers/trastos/create.php');
+$router->post('/auth/create', 'UserController@store');
+$router->post('/auth/logout', 'UserController@logout');
+
+
 
