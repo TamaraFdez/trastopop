@@ -3,13 +3,13 @@
 namespace Core;
 
 use App\Controllers\ErrorController;
-use App\Controllers\HomeController;
+use Core\Middleware\Autorize;
 
 class Router
 {
     protected $routes = [];
 
-    function registerRoute($method, $uri, $action)
+    function registerRoute($method, $uri, $action, $middleware = [])
     {
         list($controller, $controllerMethod) = explode('@', "$action");
 
@@ -18,7 +18,8 @@ class Router
             'method' => $method,
             'uri' => $uri,
             'controller' => $controller,
-            'controllerMethod' => $controllerMethod
+            'controllerMethod' => $controllerMethod,
+            'middleware' => $middleware
 
         ];
     }
@@ -29,9 +30,9 @@ class Router
      * @return void
      */
 
-    function get($uri, $controller)
+    function get($uri, $controller, $middleware = [])
     {
-        $this->registerRoute('GET', $uri, $controller);
+        $this->registerRoute('GET', $uri, $controller, $middleware);
     }
     /**
      * Añade una ruta por POST
@@ -40,9 +41,9 @@ class Router
      * @return void
      */
 
-    function post($uri, $controller)
+    function post($uri, $controller, $middleware = [])
     {
-        $this->registerRoute('POST', $uri, $controller);
+        $this->registerRoute('POST', $uri, $controller,$middleware);
     }
     /**
      * Añade una ruta por PUT
@@ -51,9 +52,9 @@ class Router
      * @return void
      */
 
-    function put($uri, $controller)
+    function put($uri, $controller, $middleware = [])
     {
-        $this->registerRoute('PUT', $uri, $controller);
+        $this->registerRoute('PUT', $uri, $controller, $middleware);
     }
 
     /**
@@ -63,9 +64,9 @@ class Router
      * @return void
      */
 
-    function delete($uri, $controller)
+    function delete($uri, $controller, $middleware = [])
     {
-        $this->registerRoute('DELETE', $uri, $controller);
+        $this->registerRoute('DELETE', $uri, $controller, $middleware);
     }
 
  
@@ -83,7 +84,7 @@ class Router
          //mirar el método
          $requestedMethod = $_SERVER['REQUEST_METHOD'];
  
-         //mirar el _method que nos llega y lo guardamos en caso qu eno sea ni GET ni POST
+         //mirar el _method que nos llega y lo guardamos en caso que no sea ni GET ni POST
          if ($requestedMethod === 'POST' && isset($_POST['_method'])) {
              $requestedMethod = strtoupper($_POST['_method']);
          }
@@ -121,6 +122,11 @@ class Router
                  }
  
                  if ($match) {
+                    //Llamamos al middleware antes del controlador
+                    foreach($route['middleware'] as $middleware){
+                        (new Autorize())->handle($middleware);
+                    }
+
                      //Montamos la ruta del controller
                      $controller = 'App\\controllers\\' . $route['controller'];
                      $controllerMethod = $route['controllerMethod'];

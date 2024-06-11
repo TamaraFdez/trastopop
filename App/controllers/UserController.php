@@ -50,11 +50,12 @@ class UserController
         if (!empty($errors)) {
             loadView('users/create', [
                 'errors' => $errors,
-                'user' => $name,
-                'email' => $email,
-                'city' => $city,
-                'state' => $state
-            ]);
+                'user' => [
+                    'name' => $name,
+                    'email' => $email,
+                    'city' => $city,
+                    'state' => $state
+                ]]);
             exit;
         }
 
@@ -86,21 +87,76 @@ class UserController
         ];
         // inspectAndDie($params);
         $this->db->query('INSERT INTO users (name, email, city, state, password) VALUES (:name, :email, :city, :state, :password)', $params);
-        //TODO autologin -iniciar sesion
-        Session::set('user', [
-            'name' => $name,
-            'email' => $email,
-            'city' => $city,
-            'state' => $state
+       
 
-        ]);
-        redirect('/');
+        redirect('/auth/login');
     }
     function logout(){
         Session::clearAll();
 
         $params = session_get_cookie_params();
         setcookie('PHPSESSIN','', time() - 1, $params['path'], $params['domain']);
+        redirect('/');
+    }
+    function authenticate(){
+       
+        $email = $_POST['email'];
+       
+        $password = $_POST['password'];
+       
+
+        $errors = [];
+
+        
+        if (!Validation::email($email)) {
+            $errors['email'] = "Escribe un email válido";
+        }
+       
+        if (!empty($errors)) {
+            loadView('users/login', [
+                'errors' => $errors,
+            ]);
+            exit;
+        }
+
+        //Mirar si ya existe el email y si es asi comprobamos el password
+   
+        $params = [
+            'email' => $email
+        ];
+        $user = $this->db->query('SELECT * FROM users WHERE email = :email', $params)->fetch();
+
+        if (!$user) {
+            $errors['email'] = "Credenciales no válidas";
+            loadView('users/login', [
+                'errors' => $errors,
+                'user' => [
+                    'email' => $email
+                ] 
+            ]);
+            exit;
+        }
+     //Si coincide iniciamos session sinó mostramos la vista login
+     if(!password_verify($password, $user->password)){
+        $errors['email'] = "Credenciales no válidas";
+        loadView('users/login', [
+            'errors' => $errors,
+            'user' => [
+                'email' => $email
+            ]
+         
+        ]);
+        exit;
+     }
+
+    Session::set('user', [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'city' => $user->city,
+            'state' => $user->state
+
+        ]);
         redirect('/');
     }
 }

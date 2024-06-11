@@ -19,7 +19,7 @@ class Session
 
     static function get($key)
     {
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : NULL;
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
     }
 
     static function has($key)
@@ -36,5 +36,13 @@ class Session
     static function clearAll(){
       session_unset();
       session_destroy();
+    }
+    static function setFlashMessage($key, $message){
+        self::set('flash_'.$key, $message);
+    }
+    static function getFlashMessage($key, $default = null){
+        $message = self::get('flash_'.$key, $default);
+        self::clear('flash_'.$key);
+        return $message;
     }
 }

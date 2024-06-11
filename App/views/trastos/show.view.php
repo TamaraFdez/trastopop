@@ -1,4 +1,8 @@
-<?php loadPartial('head') ?>
+<?php
+
+use Core\Authorization;
+
+ loadPartial('head') ?>
 <?php loadPartial('navbar') ?>
 <?php loadPartial('top-banner') ?>
 <?php 
@@ -12,17 +16,18 @@
                 <i class="fa fa-arrow-alt-circle-left"></i>
                 Volver a los Listados
             </a>
+            <?php if(Core\Authorization::isOwner($trasto->user_id)) :?>
             <div class="flex space-x-4 ml-4">
                 <a href="/trasto/edit/<?= $trasto->id?>" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">Editar</a>
-                <!-- Delete Form -->
                 <form method="POST">
                     <input type="hidden" name="_method" value="DELETE">
                     <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded">
                         Eliminar
                     </button>
                 </form>
-                <!-- End Delete Form -->
+            
             </div>
+            <?php endif ?>
         </div>
         <div class="p-4">
             <h2 class="text-xl font-semibold"><?= $trasto->title ?></h2>

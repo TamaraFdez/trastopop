@@ -2,7 +2,9 @@
 
 namespace App\Controllers;
 
+use Core\Authorization;
 use Core\Database;
+use Core\Session;
 use Core\Validation;
 
 class TrastoController
@@ -55,7 +57,7 @@ class TrastoController
         //Sanitizar los valores de todos los campos
         $newTrastoData = array_map('sanitize', $newTrastoData);
         //recorremos los campos requeridos y guardamos los errores si los hay
-        $newTrastoData['user_id'] = 2; //fake logged user
+        $newTrastoData['user_id'] = Session::get('user')['id'];
 
         //SUBIR LA IMAGEN A LA CARPETA Y GUARDAR LA RUTA
         $foto_nombre = $_FILES['foto']['name']; // Nombre del archivo de la imagen
@@ -112,8 +114,8 @@ class TrastoController
             $query = "INSERT INTO trastos ($fields) VALUES ($values)";
 
             $this->db->query($query, $newTrastoData);
-            $_SESSION['succes_message'] = 'Trasto añadido correctamente.';
-            redirect('/trastos/create');
+            Session::setFlashMessage('succes_message','Trasto añadido correctamente.' );
+            redirect('/trastos');
         }
 
         //sino hay errores guardarmos el trasto
@@ -123,13 +125,25 @@ class TrastoController
 
         $trasto = $this->db->query('SELECT * FROM trastos WHERE id = :id', $params)->fetch();
 
+
+
         if (!$trasto) {
-            //TODO crear el errorcontroller
+
             ErrorController::notFount('No se encuentra el trasto');
             return;
         }
+
+        //comprobar si somos el autor
+if(!Authorization::isOwner($trasto->user_id)){
+    //TODO mostrar mensaje de error
+    Session::setFlashMessage('error_message','No tienes autorización' );
+
+    return redirect('/trasto/'.$trasto->id);
+}
+
         $this->db->query('DELETE FROM trastos WHERE id = :id', $params);
-        $_SESSION['succes_message'] = 'Trasto eliminado correctamente.';
+     
+        Session::setFlashMessage('succes_message','Trasto eliminado correctamente.' );
         redirect('/trastos');
     }
     function edit($params)
@@ -138,10 +152,17 @@ class TrastoController
         $trasto = $this->db->query('SELECT * FROM trastos WHERE id = :id', $params)->fetch();
 
         if (!$trasto) {
-            //TODO crear el errorcontroller
+
             ErrorController::notFount('No se encuentra el trasto');
             return;
         }
+        if(!Authorization::isOwner($trasto->user_id)){
+            //TODO mostrar mensaje de error
+         
+            Session::setFlashMessage('error_message','No tienes autorización' );
+            return redirect('/trasto/'.$trasto->id);
+        }
+
 
         loadView('trastos/edit', [
             'trasto' => $trasto
@@ -149,7 +170,7 @@ class TrastoController
     }
     function update($params)
     {
-        
+
         //comprobar que el trasto para actualizar existe
         $trasto = $this->db->query('SELECT * FROM trastos WHERE id = :id', $params)->fetch();
 
@@ -157,6 +178,12 @@ class TrastoController
             //TODO crear el errorcontroller
             ErrorController::notFount('No se encuentra el trasto');
             return;
+        }
+        if(!Authorization::isOwner($trasto->user_id)){
+            //TODO mostrar mensaje de error
+            Session::setFlashMessage('error_message','No tienes autorización' );
+
+            return redirect('/trasto/'.$trasto->id);
         }
         //asegurar que llegan todos los campos requeridos o válidos
         $allowedFields = ['title', 'description', 'details', 'price', 'condition', 'category', 'tags', 'seller', 'address', 'city', 'state', 'phone', 'email'];
@@ -168,43 +195,42 @@ class TrastoController
 
 
         //SUBIR LA IMAGEN A LA CARPETA Y GUARDAR LA RUTA
-    //     if(isset($_FILES['foto'])){
-    //     $foto_nombre = $_FILES['foto']['name']; // Nombre del archivo de la imagen
-    //     $foto_temp = $_FILES['foto']['tmp_name']; // Ruta temporal del archivo de la imagen
+        //     if(isset($_FILES['foto'])){
+        //     $foto_nombre = $_FILES['foto']['name']; // Nombre del archivo de la imagen
+        //     $foto_temp = $_FILES['foto']['tmp_name']; // Ruta temporal del archivo de la imagen
 
-    //     if ($_FILES['foto']['error'] !== UPLOAD_ERR_OK) {
-    //         echo "Error al subir el archivo.";
-    //         exit(); // Salir del script si hay un error en la carga
-    //     }
+        //     if ($_FILES['foto']['error'] !== UPLOAD_ERR_OK) {
+        //         echo "Error al subir el archivo.";
+        //         exit(); // Salir del script si hay un error en la carga
+        //     }
 
-    //     // Obtener la extensión del archivo de la imagen
-    //     $foto_extension = pathinfo($foto_nombre, PATHINFO_EXTENSION);
-    //     // Generar un nombre único para la imagen
-    //     $foto_nuevo_nombre = uniqid() . '.' . $foto_extension;
-    //     // Ruta de destino para guardar la imagen en la carpeta images
-    //     $ruta_destino = basePath('public/images/' . $foto_nuevo_nombre);
-    //     // inspectAndDie($ruta_destino);
-    //     if (!move_uploaded_file($foto_temp, $ruta_destino)) {
-    //         echo "Error al mover el archivo.";
-    //         exit(); // Salir del script si hay un error al mover el archivo
-    //     }
-    //     $updateTrastoData['imgurl'] = $foto_nuevo_nombre;
-    //     $thumbImage = resizeImg($updateTrastoData);
-    //     $updateTrastoData['thumbnail_imgurl'] = 'thumb'. $foto_nuevo_nombre;
-    // }
+        //     // Obtener la extensión del archivo de la imagen
+        //     $foto_extension = pathinfo($foto_nombre, PATHINFO_EXTENSION);
+        //     // Generar un nombre único para la imagen
+        //     $foto_nuevo_nombre = uniqid() . '.' . $foto_extension;
+        //     // Ruta de destino para guardar la imagen en la carpeta images
+        //     $ruta_destino = basePath('public/images/' . $foto_nuevo_nombre);
+        //     // inspectAndDie($ruta_destino);
+        //     if (!move_uploaded_file($foto_temp, $ruta_destino)) {
+        //         echo "Error al mover el archivo.";
+        //         exit(); // Salir del script si hay un error al mover el archivo
+        //     }
+        //     $updateTrastoData['imgurl'] = $foto_nuevo_nombre;
+        //     $thumbImage = resizeImg($updateTrastoData);
+        //     $updateTrastoData['thumbnail_imgurl'] = 'thumb'. $foto_nuevo_nombre;
+        // }
         $requiredFields = ['title', 'description', 'city', 'email'];
-        $updateTrastoData['id']= $trasto->id;
+        $updateTrastoData['id'] = $trasto->id;
         $errors = [];
         foreach ($requiredFields as $field) {
             if (empty($updateTrastoData[$field]) || !Validation::string($updateTrastoData[$field])) {
                 $errors[$field] = "el campo no es válido";
             }
-         
         }
 
         //si hay errore slos pasamos a la vista
         if ($errors) {
-          
+
             loadView('/trastos/edit', ['errors' => $errors, 'trasto' => (object)$updateTrastoData]);
             exit;
         } else {
@@ -225,12 +251,12 @@ class TrastoController
             }
             $values = implode(', ', $values);
             $query = "UPDATE trastos SET $updateFields WHERE id = :id";
-            // inspect($trasto);
             
-            // inspectAndDie($query);
+
             $this->db->query($query, $updateTrastoData);
-            $_SESSION['succes_message'] = 'Trasto editado correctamente.';
-            redirect('/trasto/'.$params['id']);
+            Session::setFlashMessage('error_message','No tienes autorización' );
+
+            redirect('/trasto/' . $params['id']);
 
             //sino hay errores guardarmos el trasto
         }
